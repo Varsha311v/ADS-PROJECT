@@ -1,0 +1,6 @@
+.git
+node_modules
+backend/build
+backend/data
+dist
+tests

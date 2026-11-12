@@ -1,0 +1,17 @@
+{
+  "name": "friend-finder",
+  "version": "2.0.0",
+  "description": "See how people are connected. C++ backend (REST API) with a browser frontend; BFS, DFS and set intersection.",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "make -C backend",
+    "start": "make -C backend run",
+    "start:static": "python3 -m http.server 8080",
+    "test": "node --test tests/graph.test.js && make -C backend test && python3 backend/tests/api_test.py",
+    "test:js": "node --test tests/graph.test.js",
+    "test:backend": "make -C backend test && python3 backend/tests/api_test.py",
+    "test:e2e": "node tests/e2e.js"
+  },
+  "engines": { "node": ">=18" }
+}

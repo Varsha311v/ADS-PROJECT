@@ -1,0 +1,11 @@
+# Static frontend only. Set the env var API_URL in Netlify (Site settings > Environment variables)
+# to point the site at your hosted C++ backend. The backend itself cannot run on Netlify.
+[build]
+  command = "sh scripts/netlify-build.sh"
+  publish = "dist"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "same-origin"

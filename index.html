@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Friend Finder – see how people are connected</title>
+  <meta name="description" content="Add people, make them friends and see how everyone is connected, using BFS, DFS and set intersection.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-theme="warm">
+  <header class="top">
+    <div>
+      <h1>Friend Finder</h1>
+      <p class="lede">Add a few people, make them friends, and see how everyone is connected. It works like the “people you may know” feature on social apps.</p>
+      <p id="mode" class="mode" role="status">Checking for the server…</p>
+    </div>
+    <label class="theme">Colour
+      <select id="theme">
+        <option value="warm">Warm White</option>
+        <option value="night">Midnight</option>
+        <option value="sea">Sea Glass</option>
+      </select>
+    </label>
+  </header>
+
+  <main class="layout">
+    <section class="panel" aria-labelledby="net-h">
+      <div class="panel-head">
+        <h2 id="net-h">Your network</h2>
+        <div class="row">
+          <button type="button" id="example" class="ghost">Try an example</button>
+          <button type="button" id="reset" class="ghost">Start over</button>
+        </div>
+      </div>
+
+      <div id="empty" class="empty">
+        <h3>No one here yet</h3>
+        <p>Add a person on the right, or start with a ready-made example.</p>
+        <button type="button" id="example2">Load the example</button>
+      </div>
+
+      <svg id="canvas" class="canvas" viewBox="0 0 640 460" role="img" aria-label="Friendship network diagram" hidden></svg>
+
+      <ul class="legend" aria-label="Legend">
+        <li><i class="k path"></i>Shortest route</li>
+        <li><i class="k visit"></i>Visited</li>
+        <li><i class="k match"></i>Friends in common or suggested</li>
+        <li><i class="k pick"></i>Chosen people</li>
+      </ul>
+
+      <details class="adj">
+        <summary>See how the network is stored</summary>
+        <p>Each person is listed with their friends. This is called an adjacency list.</p>
+        <pre id="adjlist" aria-live="polite"></pre>
+      </details>
+    </section>
+
+    <aside class="side">
+      <section class="panel">
+        <h2><span class="n">1</span>Add people</h2>
+        <p class="hint">Type a name and press Add.</p>
+        <form id="addForm" class="row" autocomplete="off">
+          <input id="nameInput" type="text" maxlength="30" placeholder="e.g. Maya" aria-label="Person's name">
+          <button type="submit">Add</button>
+        </form>
+        <p id="addMsg" class="msg" role="status"></p>
+      </section>
+
+      <section class="panel">
+        <h2><span class="n">2</span>Make friends</h2>
+        <p class="hint">Pick two people to connect.</p>
+        <form id="friendForm" class="stack">
+          <select id="fa" aria-label="First person"></select>
+          <span class="and">and</span>
+          <select id="fb" aria-label="Second person"></select>
+          <button type="submit">Make them friends</button>
+        </form>
+        <p id="friendMsg" class="msg" role="status">Add at least two people to begin.</p>
+      </section>
+
+      <section class="panel">
+        <h2><span class="n">3</span>Explore</h2>
+        <p class="hint">Choose a question to ask the network.</p>
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" data-mode="common" aria-selected="true">Friends in common</button>
+          <button type="button" role="tab" data-mode="route" aria-selected="false">How connected?</button>
+          <button type="button" role="tab" data-mode="suggest" aria-selected="false">Who might they know?</button>
+          <button type="button" role="tab" data-mode="visit" aria-selected="false">Visit everyone</button>
+        </div>
+        <div class="stack">
+          <select id="ea" aria-label="First person to explore"></select>
+          <span class="and" id="eand">and</span>
+          <select id="eb" aria-label="Second person to explore"></select>
+          <select id="order" aria-label="Visiting order" hidden>
+            <option value="bfs">Nearest first (BFS)</option>
+            <option value="dfs">Go deep first (DFS)</option>
+          </select>
+          <button type="button" id="run">Find friends in common</button>
+        </div>
+        <div id="result" class="result" role="status" aria-live="polite">Pick people above, then press the button.</div>
+      </section>
+    </aside>
+  </main>
+
+  <section class="how">
+    <h2>How it works</h2>
+    <p>A social network is a graph: people are dots and friendships are lines between them.</p>
+    <h3>Nearest first (BFS)</h3>
+    <p>Like ripples in a pond: check all of someone’s friends, then their friends’ friends, and so on. This finds the shortest route between two people.</p>
+    <h3>Go deep first (DFS)</h3>
+    <p>Like following one lane to its very end, then turning back to try the next. It reaches the same people, in a different order.</p>
+    <h3>Friends in common</h3>
+    <p>Compare two friend lists and keep the names that appear in both. Friends of friends become suggestions.</p>
+    <details>
+      <summary>For the curious: speed of each feature</summary>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Feature</th><th>Method</th><th>Time</th></tr></thead>
+          <tbody>
+            <tr><td>Add person or friendship</td><td>Insert into a map and a set</td><td>O(log V)</td></tr>
+            <tr><td>Friends in common</td><td>Set intersection</td><td>O(d1 + d2)</td></tr>
+            <tr><td>Shortest route</td><td>BFS with a queue</td><td>O(V + E)</td></tr>
+            <tr><td>Suggestions</td><td>Friends of friends</td><td>O(d²)</td></tr>
+            <tr><td>Visit everyone</td><td>BFS or DFS</td><td>O(V + E)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">V is the number of people, E the number of friendships, d the number of friends one person has.</p>
+    </details>
+  </section>
+
+  <script src="js/config.js"></script>
+  <script src="js/graph.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
